@@ -4,7 +4,7 @@ import "./CardBtn.css";
 const CardBtn = props => (
   <button
     onClick={props.onClick}
-    className={`card-btn ${props["data-value"]}`}
+    className={`profile-btn ${props["data-value"]}`}
     {...props}
   >Profile </button>
 );

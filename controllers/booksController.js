@@ -25,6 +25,7 @@ module.exports = {
       })
       .catch(err => res.status(422).json(err));
   },
+
   addVideo: function (req, res) {
     console.log(req)
     db.Book
@@ -80,6 +81,7 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
+  
   update: function (req, res) {
     db.Book
       .findOneAndUpdate({ _id: req.params.id }, req.body)

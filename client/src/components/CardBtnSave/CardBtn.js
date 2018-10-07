@@ -4,7 +4,7 @@ import "./CardBtn.css";
 const CardBtn = props => (
   <button
     onClick={props.onClick}
-    className={`card-btn ${props["data-value"]}`}
+    className={`save-btn ${props["data-value"]}`}
     {...props}
   >
   {props.alreadySaved == true ? "Unsave" : "Save"}

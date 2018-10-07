@@ -3,24 +3,28 @@ import Jumbotron from "../../components/Jumbotron";
 import DeleteBtn from "../../components/DeleteBtn";
 import API from "../../utils/API";
 import { Col, Row, Container } from "../../components/Grid";
-import Subtitle from '../../components/Subtitle';
 import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
 import Hero from "../../components/Hero";
 import Nav from "../../components/Nav";
+import Subtitle from '../../components/Subtitle';
 import SearchForm from "../../components/SearchForm";
 import Youtube from '../../components/Youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
-import VideoCard from '../../components/Card2';
+import VideoCard from '../../components/VideoCard';
 import ProfileCard from '../../components/ProfileCard';
-import Modalpop from '../../components/Modal'
+import FriendsList from '../../components/FriendsList';
+import Modal from '../../components/Modal';
+
 import "./Otheruser.css";
 
-class Otheruser extends Component {
+
+class Home extends Component {
   // Setting our component's initial state
 
   state = {
+    show: false,
     apiResults: [],
     searchQuery: "",
     user: [],
@@ -29,29 +33,63 @@ class Otheruser extends Component {
     photo: "",
     gender: "",
     currentUserID: "",
+    currentVideoID: "",
     username: "",
     userFriends: [],
-    userFriendObjs: []
+    userFriendObjs: [],
+    userVideos: [],
+    userVideoObjs: []
 
   };
 
   // When the component mounts, load all books and save them to this.state.books
   componentDidMount() {
-    // this.setState({ currentuserID: localStorage.getItem("userID") })
-    //console.log(this.state.currentUserID)
-    // console.log(localStorage.getItem("userID"))
+  
     this.loadUser(localStorage.getItem("userID"));
   }
+
   // Loads all User  and sets them to this.state.User
   loadUser = (id) => {
     API.getBook(id)
       .then(res => {
-        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, search: "", apiResults: [], })
+        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts })
         console.log(this.state.user)
-        this.loadFriends()
+
+        this.loadFriends();
+        console.log(this.state.userVideos)
+        if (this.state.userVideos.length > 0) {
+          this.loadVideos();
+
+        }
+
+
       })
       .catch(err => console.log(err));
-      
+
+  };
+
+  loadVideos = () => {
+    console.log("test")
+    for (var i = 0; i < this.state.userVideos.length; i++) {
+      var query;
+      if (query) {
+        query = query + this.state.userVideos[i] + ",";
+      }
+      else {
+        query = this.state.userVideos[i] + ",";
+      }
+    }
+    var queryState = "multiSearch"
+    console.log(query)
+    API.searchAPI(queryState, query)
+      .then(res => {
+        this.setState({ userVideoObjs: res.data.items })
+        console.log(this.state.apiResults);
+        console.log(this.state.userVideoObjs)
+        this.test()
+      })
+      .catch(err => console.log(err));
+
   };
 
   loadFriends = () => {
@@ -60,22 +98,71 @@ class Otheruser extends Component {
         this.setState({
           users: res.data,
         })
-        
-        
+
+
         console.log(this.state.users)
         var userFriendObjs = []
-        for (var i = 0; i < this.state.users.length; i++){
-          if (this.state.userFriends.includes(this.state.users[i]._id))
-          {
+        for (var i = 0; i < this.state.users.length; i++) {
+          if (this.state.userFriends.includes(this.state.users[i]._id)) {
             userFriendObjs.push(this.state.users[i])
           }
 
         }
         this.setState({ userFriendObjs: userFriendObjs })
         console.log(this.state.userFriendObjs)
-        
+
       })
       .catch(err => console.log(err));
+  };
+
+  handleBtnPlay = id => {
+    console.log(id)
+    this.setState({ currentVideoID: id, show: true })
+  };
+
+  alreadySaved = (id) => {
+    console.log('look at me:')
+    console.log(this.state.userVideos)
+    if (this.state.userVideos.includes(id)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+
+  }
+
+  handleBtnSave = (videoID) => {
+    // for (var i = 0; i < this.state.apiResults.length; i++) {
+    //   if (this.state.apiResults[i].id.videoId == videoID) {
+    //     var vidToSave = this.state.apiResults[i];
+    //   }
+    // }
+    // event.preventDefault();
+    var userID = localStorage.getItem("userID")
+    if (this.alreadySaved(videoID)) {
+      API.removeVideo(userID, videoID)
+        .then(res => {
+
+          this.loadUser(userID);
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
+      console.log(this.state.users)
+    }
+    else {
+      API.addVideo(userID, videoID)
+        .then(res => {
+
+          this.loadUser(userID);
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
+    }
   };
   // Deletes a book from the database with a given id, then reloads books from the db
   deleteBook = id => {
@@ -90,6 +177,14 @@ class Otheruser extends Component {
     this.setState({
       [name]: value
     });
+  };
+
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
   };
 
   searchYoutube = query => {
@@ -125,73 +220,82 @@ class Otheruser extends Component {
           <h1>Welcome {this.state.user.username}! </h1>
 
         </Hero>
-        <br></br><br></br>
+        <br></br>
         <Container fluid>
           <Row>
-          <Col size="md-4">
 
-           <Subtitle data="Profile"></Subtitle>
-            <ProfileCard
-              id={this.state.user._id}
-              key={this.state.user._id}
-              name={this.state.user.username}
-              image={this.state.user.photo}
-              realname={this.state.user.realname}
-              gender={this.state.user.gender}
+            <Col size="md-3">
 
-            />
-            {/* <Container className = "video-container">
+              <Subtitle data="My Profile"></Subtitle>
 
-        
-       
-          
-              <ListItem className = "video-container">
-                
-                {this.state.apiResults.map(result => (
-         
-                  <VideoCard image= {result.snippet.thumbnails.high.url} 
-                  title = {result.snippet.title}
-                 
-                  ></VideoCard> 
-                  
-                  
-                ))}
+              <ProfileCard
+                id={this.state.user._id}
+                key={this.state.user._id}
+                name={this.state.user.username}
+                image={this.state.user.photo}
+                realname={this.state.user.realname}
+                gender={this.state.user.gender}
+
+              />
+
+            </Col>
+
+            <Col size="md-7">
+              <Subtitle data="My Videos"></Subtitle>
+
+               <Modal show={this.state.show} handleClose={this.hideModal}>
                
-              </ListItem>
-          
-         
-         
-     
-        </Container> */}
-          </Col>
-          <Col size="md-4">
-          <Subtitle data="Videos"></Subtitle></Col>
-          <Col size="md-4">
-           <Subtitle data="Friends"></Subtitle>
-          
-              <List>
+                <Youtube src={this.state.currentVideoID}></Youtube>
+              </Modal>
+              {this.state.userVideoObjs.length ? (
+
+                <ListItem className="video-container">
+
+                  {this.state.userVideoObjs.map(result => (
+
+                    <VideoCard image={result.snippet.thumbnails.high.url}
+                      title={result.snippet.title}
+                      key={result.id}
+                      id={result.id}
+                      handleBtnPlay={this.handleBtnPlay}
+                      handleBtnSave={this.handleBtnSave}
+                      alreadySaved={this.alreadySaved}
+                    >
+                    </VideoCard>
+
+
+                  ))}
+
+                </ListItem>
+
+
+              ) : (
+                  <h3></h3>
+                )}
+
+
+            </Col>
+
+            <Col size="md-2">
+              <Subtitle data="My Friends"></Subtitle>
+
+              
                 {this.state.userFriendObjs.map(user => {
                   return (
-                    <ListItem key={user._id}>
-                      <a href={"/otheruser/" + user._id}>
-                      <strong>
-                          {user.photo}  
-                        </strong>
 
-                      </a>
-                      <strong>
-                           {user.username}
-                        </strong>
+                    <ListItem>
+                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
                     </ListItem>
-                  );
+                  )
                 })}
-              </List>
+            
 
-          </Col>
+            </Col>
           </Row>
         </Container>
       </div>
     );
   }
 }
-export default Otheruser;
+
+export default Home;

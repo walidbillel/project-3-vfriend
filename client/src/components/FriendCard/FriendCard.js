@@ -16,7 +16,12 @@ const FriendCard = props => (
         <li>
           <strong>Real Name:</strong> {props.realname}
         </li>
+        <li>
+          
+        </li>
       </ul>
+      
+      <div className="profile-btns"></div>
       <FollowBtn  
       data-value="follow"
       onClick = {() => props.handleFriends(props.id)}
@@ -28,6 +33,7 @@ const FriendCard = props => (
       onClick = {() => props.goToFriend(props.id)}
       id = {props.id}
       />
+      
     </div>
    
   </div>

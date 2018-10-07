@@ -1,26 +1,26 @@
-.card-btn {
+.follow-btn {
   
   height: 50px;
-  width: 50px;
+  width: 100px;
+  border-radius: 15px;
   border: none;
-  
+  bottom: 10%;
   color: #FFF;
   font-size: 15px;
   cursor: pointer;
-  
+  font-family: FontAwesome;
   outline: none;
+ 
+  
 }
 
 .follow {
-
- bottom: 100px;
- margin-left: 160px;
- 
-  background: #E53935;
+  margin-right: 90px;
+  background: rgb(0, 12, 82);
 }
 
 .follow::after {
-  content: "\f165";
+  content: " \f0a4";
 }
 
 

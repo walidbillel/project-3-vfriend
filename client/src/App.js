@@ -1,6 +1,5 @@
 import React from "react";
 import Register from "./pages/Register";
-import Nav from "./components/Nav";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Login from "./pages/Login";

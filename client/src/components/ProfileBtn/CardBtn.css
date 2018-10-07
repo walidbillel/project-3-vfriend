@@ -1,8 +1,8 @@
-.card-btn {
-  border-radius: 50%;
+.profile-btn {
+  
   height: 50px;
-  width: 50px;
-
+  width: 100px;
+  border-radius: 15px;
   border: none;
   bottom: 10%;
   color: #FFF;
@@ -10,21 +10,23 @@
   cursor: pointer;
   font-family: FontAwesome;
   outline: none;
+ 
+  
 }
 
 .profile {
-  left: 10px;
-  background: #E53935;
+  
+  background: rgb(0, 12, 82);
 }
 
 .profile::after {
-  content: "\f165";
+  content: "	\f007";
 }
 
 
 
 .pick::after {
-  content: "\f164";
+  content: "\f007";
 }
 
 .pick:hover::after, .profile:hover::after {

@@ -11,6 +11,7 @@ import FriendCard from "../../components/FriendCard";
 import Wrapper from "../../components/Wrapper";
 import MemberBox from "../../components/MemberBox";
 import { Link } from "react-router-dom";
+import FriendsList from '../../components/FriendsList';
 import "./Members.css";
 import Hero  from "../../components/Hero";
 
@@ -35,6 +36,7 @@ class Members extends Component {
   componentDidMount() {
     this.loadBooks();
   }
+
 
   loadFriends = () => {
     API.getBooks()
@@ -102,6 +104,7 @@ class Members extends Component {
       .then(res => {
         this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, search: "", apiResults: [],})
         console.log(this.state.userFriends)
+        this.loadFriends();
       })
       .catch(err => console.log(err));
   };
@@ -175,15 +178,15 @@ class Members extends Component {
         <h1>Vfriend Members</h1>
 
       </Hero>
-      <br></br><br></br>
+      <br></br>
       <Container fluid>
 
         <Row>
-          <Col size="md-8">
+          <Col size="md-10">
 
           <Subtitle data="Members"></Subtitle>
 
-            <Wrapper>
+           
               <MemberBox>
                 {this.state.users2.map(friend => (
                   <FriendCard
@@ -203,28 +206,18 @@ class Members extends Component {
                 ))}
               </MemberBox>
 
-            </Wrapper>
+           
           </Col>
 
-          <Col size="md-4">
+          <Col size="md-2">
           <Subtitle data="My friends"></Subtitle>
-          <List>
-                {this.state.userFriendObjs.map(user => {
+          {this.state.userFriendObjs.map(user => {
                   return (
-                    <ListItem key={user._id}>
-                      <a href={"/otheruser/" + user._id}>
-                      <strong>
-                          {user.photo}  
-                        </strong>
-
-                      </a>
-                      <strong>
-                           {user.username}
-                        </strong>
-                    </ListItem>
-                  );
+                    
+                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
+                   
+                  )
                 })}
-              </List>
           </Col>
         </Row>
       </Container>

@@ -16,7 +16,7 @@
   background:#6CADDC;
 }
 .card > .img-container > img {
-  width: 60%
+  width: 100%
 }
 
 .card > .content {
@@ -24,6 +24,7 @@
   padding-right: 1rem;
   font-size: 15px;
 }
+
 
 .card > .content > ul {
   list-style-type: none;

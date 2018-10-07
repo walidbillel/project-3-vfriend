@@ -12,10 +12,18 @@ import SearchForm from "../../components/SearchForm";
 import Youtube from '../../components/Youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
-import VideoCard from '../../components/Card2';
+import VideoCard from '../../components/VideoCard';
+import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal'
 import "./Search.css";
 
+const Style = {
+  logo: {
+    height: "100px",
+    width: "400px"
+
+  }
+}
 
 class Search extends Component {
   // Setting our component's initial state
@@ -32,6 +40,7 @@ class Search extends Component {
     username: "",
     currentVideoID: "",
     userFriends: [],
+    userFriendObjs: [],
     userVideos: [],
     userVideoObjs: []
 
@@ -39,6 +48,8 @@ class Search extends Component {
 
   // When the component mounts, load all books and save them to this.state.books
   componentDidMount() {
+    this.setState({ apiResults: [], searchQuery: "" })
+
     // this.setState({ currentuserID: localStorage.getItem("userID") })
     //console.log(this.state.currentUserID)
     // console.log(localStorage.getItem("userID"))
@@ -49,14 +60,44 @@ class Search extends Component {
     console.log(id)
     API.getBook(id)
       .then(res => {
-        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts, search: "", apiResults: [], })
+        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts, })
         console.log(this.state.userVideos)
+        this.loadFriends();
         if (this.state.userVideos.length > 0) {
           this.loadVideos();
+
         }
+        
       })
       .catch(err => console.log(err));
 
+  };
+
+  loadFriends = () => {
+    console.log("test")
+    API.getBooks()
+      .then(res => {
+        this.setState({
+          users: res.data,
+        })
+        
+        
+        console.log(this.state.users)
+
+        let userFriends = []
+        for (let i = 0; i < this.state.users.length; i++){
+          if (this.state.userFriends.includes(this.state.users[i]._id))
+          {
+            console.log("heres the for loop")
+            userFriends.push(this.state.users[i])
+          }
+
+        }
+        this.setState({ userFriendObjs: userFriends })
+        console.log(this.state.userFriendObjs)
+        
+      })
+      .catch(err => console.log(err));
   };
 
   loadVideos = () => {
@@ -89,6 +130,7 @@ class Search extends Component {
   };
 
   alreadySaved = (id) => {
+    console.log('look at me:')
     console.log(this.state.userVideos)
     if (this.state.userVideos.includes(id)) {
       return true;
@@ -100,11 +142,11 @@ class Search extends Component {
   }
 
   handleBtnSave = (videoID) => {
-    for (var i = 0; i < this.state.apiResults.length; i++) {
-      if (this.state.apiResults[i].id.videoId == videoID) {
-        var vidToSave = this.state.apiResults[i];
-      }
-    }
+    // for (var i = 0; i < this.state.apiResults.length; i++) {
+    //   if (this.state.apiResults[i].id.videoId == videoID) {
+    //     var vidToSave = this.state.apiResults[i];
+    //   }
+    // }
     // event.preventDefault();
     var userID = localStorage.getItem("userID")
     if (this.alreadySaved(videoID)) {
@@ -153,7 +195,8 @@ class Search extends Component {
     this.setState({ show: false });
   };
 
-  searchYoutube = query => {
+  searchYoutube = (query) => {
+    // event.preventDefault()
     console.log(query)
     var queryState = "search";
     API.searchAPI(queryState, query)
@@ -187,31 +230,33 @@ class Search extends Component {
     //     .catch(err => console.log(err));
     // }
   };
+
+
   render() {
     return (
       <div>
 
         <Nav userLogged={this.state.user.username} />
         <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-          <h1>Hi {this.state.user.username}! You are Officially A Vfriender Now :) </h1>
+          <h1>Hi {this.state.user.username}!<span><img src="./logo.png" style={Style.logo} /></span> </h1>
 
         </Hero>
-        <br></br><br></br>
+        <br></br>
         <Container fluid>
-        <Row>
-          <Col size="md-6">
+          <Row>
+            <Col size="md-5">
 
-            <Subtitle data="Look For Your Favorite videos"></Subtitle>
+              <Subtitle data="Look For Your Favorite videos"></Subtitle>
 
-            <SearchForm
-              searchQuery={this.state.searchQuery}
-              handleFormSubmit={this.handleFormSubmit}
-              handleInputChange={this.handleInputChange}
-            />
+              <SearchForm
+                searchQuery={this.state.searchQuery}
+                handleFormSubmit={this.handleFormSubmit}
+                handleInputChange={this.handleInputChange}
+              />
 
-           
+
               <Modal show={this.state.show} handleClose={this.hideModal}>
-                <p>Modal</p>
+               
                 <Youtube src={this.state.currentVideoID}></Youtube>
               </Modal>
 
@@ -242,19 +287,46 @@ class Search extends Component {
                 )}
 
 
+            </Col>
+            <Col size="md-5">
+              <Subtitle data="My Videos"></Subtitle>
+              {this.state.userVideoObjs.length ? (
+
+                <ListItem className="video-container">
+
+                  {this.state.userVideoObjs.map(result => (
+
+                    <VideoCard image={result.snippet.thumbnails.high.url}
+                      title={result.snippet.title}
+                      key={result.id}
+                      id={result.id}
+                      handleBtnPlay={this.handleBtnPlay}
+                      handleBtnSave={this.handleBtnSave}
+                      alreadySaved={this.alreadySaved}
+                    >
+                    </VideoCard>
 
 
+                  ))}
+
+                </ListItem>
 
 
-          
-          </Col>
-          <Col size="md-6">
-          <Subtitle data="My Videos"></Subtitle>
-         
-          </Col>
+              ) : (
+                  <h3></h3>
+                )}
+            </Col>
+            <Col size="md-2">
+              <Subtitle data="My Friends"></Subtitle>
+              {this.state.userFriendObjs.map(user => {
+                  return (
 
-
-</Row>
+                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
+                  )
+                })}
+              
+            </Col>
+          </Row>
         </Container>
       </div>
     );
