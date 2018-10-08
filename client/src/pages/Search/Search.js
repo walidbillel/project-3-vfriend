@@ -17,13 +17,8 @@ import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal'
 import "./Search.css";
 
-const Style = {
-  logo: {
-    height: "100px",
-    width: "400px"
 
-  }
-}
+
 
 class Search extends Component {
   // Setting our component's initial state
@@ -238,7 +233,7 @@ class Search extends Component {
 
         <Nav userLogged={this.state.user.username} />
         <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-          <h1>Hi {this.state.user.username}!<span><img src="./logo.png" style={Style.logo} /></span> </h1>
+          <h1>Hi {this.state.user.username}! </h1>
 
         </Hero>
         <br></br>

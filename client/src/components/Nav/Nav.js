@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Sw } from "react-router-dom";
 import { NavLink } from 'react-router-dom';
 import "./Nav.css";
+import Logo from './logo.svg';
 
 const STYLE ={
   navLink:{
@@ -24,7 +25,7 @@ const Navbar = props => (
  
   <nav className="navbar navbar-expand-lg navbar-dark bg-info">
     <NavLink to="#" className="navbar-brand"  >
-      <img src="./logo.png" alt="Vriend" style={STYLE.logo}></img>
+      <img src={Logo} alt="Vriend" style={STYLE.logo}></img>
     </NavLink>
     <div>
       <ul className="navbar-nav">
