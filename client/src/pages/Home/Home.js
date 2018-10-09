@@ -9,14 +9,15 @@ import Hero from "../../components/Hero";
 import Nav from "../../components/Nav";
 import Subtitle from '../../components/Subtitle';
 import SearchForm from "../../components/SearchForm";
-import Youtube from '../../components/Youtube';
+//import Youtube from '../../components/Youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
 import VideoCard from '../../components/VideoCard';
 import ProfileCard from '../../components/ProfileCard';
 import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal';
-
+import VideoBox from "../../components/VideoBox";
+import YouTube from 'react-youtube';
 import "./Home.css";
 
 
@@ -44,7 +45,7 @@ class Home extends Component {
 
   // When the component mounts, load all books and save them to this.state.books
   componentDidMount() {
-  
+
     this.loadUser(localStorage.getItem("userID"));
   }
 
@@ -241,53 +242,52 @@ class Home extends Component {
             </Col>
 
             <Col size="md-7">
-              <Subtitle data="My Videos"></Subtitle>
+              <Subtitle data="My Video Feed"></Subtitle>
 
-               <Modal show={this.state.show} handleClose={this.hideModal}>
-               
-                <Youtube src={this.state.currentVideoID}></Youtube>
+              <Modal show={this.state.show} handleClose={this.hideModal}>
+
+                <YouTube videoId= {this.state.currentVideoID}
+                  onReady={this._onReady}></YouTube>
               </Modal>
               {this.state.userVideoObjs.length ? (
-
-                <ListItem className="video-container">
-
-                  {this.state.userVideoObjs.map(result => (
-
-                    <VideoCard image={result.snippet.thumbnails.high.url}
+              <VideoBox className="video-container">
+                  
+                    {this.state.userVideoObjs.map(result => (
+                      
+                      <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
                       handleBtnSave={this.handleBtnSave}
                       alreadySaved={this.alreadySaved}
-                    >
-                    </VideoCard>
+                      >
+                      </VideoCard>
+
+))}
 
 
-                  ))}
-
-                </ListItem>
 
 
-              ) : (
+
+</VideoBox>
+                    ) : (
                   <h3></h3>
-                )}
-
-
+                )}    
             </Col>
 
             <Col size="md-2">
               <Subtitle data="My Friends"></Subtitle>
 
-              
-                {this.state.userFriendObjs.map(user => {
-                  return (
-                    
-                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
-                    
-                  )
-                })}
-            
+
+              {this.state.userFriendObjs.map(user => {
+                return (
+
+                  <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList>
+
+                )
+              })}
+
 
             </Col>
           </Row>

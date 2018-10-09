@@ -9,7 +9,7 @@ import { Input, TextArea, FormBtn } from "../../components/Form";
 import Hero from "../../components/Hero";
 import Nav from "../../components/Nav";
 import SearchForm from "../../components/SearchForm";
-import Youtube from '../../components/Youtube';
+import YouTube from 'react-youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
 import VideoCard from '../../components/VideoCard';
@@ -252,7 +252,9 @@ class Search extends Component {
 
               <Modal show={this.state.show} handleClose={this.hideModal}>
                
-                <Youtube src={this.state.currentVideoID}></Youtube>
+              <YouTube videoId= {this.state.currentVideoID}
+                  
+                  onReady={this._onReady}></YouTube>
               </Modal>
 
               {this.state.apiResults.length ? (

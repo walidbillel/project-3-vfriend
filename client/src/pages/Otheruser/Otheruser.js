@@ -9,14 +9,14 @@ import Hero from "../../components/Hero";
 import Nav from "../../components/Nav";
 import Subtitle from '../../components/Subtitle';
 import SearchForm from "../../components/SearchForm";
-import Youtube from '../../components/Youtube';
+import YouTube from 'react-youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
 import VideoCard from '../../components/VideoCard';
 import ProfileCard from '../../components/ProfileCard';
 import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal';
-
+import VideoBox from "../../components/VideoBox";
 import "./Otheruser.css";
 
 
@@ -44,12 +44,14 @@ class Home extends Component {
 
   // When the component mounts, load all books and save them to this.state.books
   componentDidMount() {
-  
-    this.loadUser(localStorage.getItem("userID"));
+    let userID = window.location.href.substr(window.location.href.lastIndexOf('/') + 1)
+    console.log(userID)
+    this.loadUser(userID);
   }
 
   // Loads all User  and sets them to this.state.User
   loadUser = (id) => {
+
     API.getBook(id)
       .then(res => {
         this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts })
@@ -86,7 +88,7 @@ class Home extends Component {
         this.setState({ userVideoObjs: res.data.items })
         console.log(this.state.apiResults);
         console.log(this.state.userVideoObjs)
-        this.test()
+        //this.test()
       })
       .catch(err => console.log(err));
 
@@ -100,7 +102,7 @@ class Home extends Component {
         })
 
 
-        console.log(this.state.users)
+        //console.log(this.state.users)
         var userFriendObjs = []
         for (var i = 0; i < this.state.users.length; i++) {
           if (this.state.userFriends.includes(this.state.users[i]._id)) {
@@ -121,8 +123,8 @@ class Home extends Component {
   };
 
   alreadySaved = (id) => {
-    console.log('look at me:')
-    console.log(this.state.userVideos)
+    //console.log('look at me:')
+    //console.log(this.state.userVideos)
     if (this.state.userVideos.includes(id)) {
       return true;
     }
@@ -217,7 +219,7 @@ class Home extends Component {
 
         <Nav userLogged={this.state.user.username} />
         <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-          <h1>Welcome {this.state.user.username}! </h1>
+          <h1>Welcome to {this.state.user.username}'s profile! </h1>
 
         </Hero>
         <br></br>
@@ -241,54 +243,53 @@ class Home extends Component {
             </Col>
 
             <Col size="md-7">
-              <Subtitle data="My Videos"></Subtitle>
+              <Subtitle data="Videos"></Subtitle>
 
-               <Modal show={this.state.show} handleClose={this.hideModal}>
-               
-                <Youtube src={this.state.currentVideoID}></Youtube>
+              <Modal show={this.state.show} handleClose={this.hideModal}>
+
+                                <YouTube videoId= {this.state.currentVideoID}
+                 
+                  onReady={this._onReady}></YouTube>
               </Modal>
               {this.state.userVideoObjs.length ? (
-
-                <ListItem className="video-container">
-
-                  {this.state.userVideoObjs.map(result => (
-
-                    <VideoCard image={result.snippet.thumbnails.high.url}
+              <VideoBox className="video-container">
+                  
+                    {this.state.userVideoObjs.map(result => (
+                      
+                      <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
                       handleBtnSave={this.handleBtnSave}
                       alreadySaved={this.alreadySaved}
-                    >
-                    </VideoCard>
+                      >
+                      </VideoCard>
+
+))}
 
 
-                  ))}
-
-                </ListItem>
 
 
-              ) : (
-                  <h3></h3>
-                )}
 
-
+</VideoBox>
+                    ) : (
+                      <h3></h3>
+                    )}   
             </Col>
 
             <Col size="md-2">
               <Subtitle data="My Friends"></Subtitle>
 
-              
-                {this.state.userFriendObjs.map(user => {
-                  return (
 
-                    <ListItem>
-                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
-                    </ListItem>
-                  )
-                })}
-            
+              {this.state.userFriendObjs.map(user => {
+                return (
+
+                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList>
+                 
+                )
+              })}
+
 
             </Col>
           </Row>
