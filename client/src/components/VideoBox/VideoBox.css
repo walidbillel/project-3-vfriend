@@ -8,5 +8,5 @@
   justify-content: space-around;
   align-content: flex-start;
   overflow: auto;
-  background-image: url("https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png");
+  background-image: linear-gradient( rgb(5, 0, 70),rgb(230, 229, 243));
 }

@@ -246,34 +246,35 @@ class Home extends Component {
 
               <Modal show={this.state.show} handleClose={this.hideModal}>
 
-                <YouTube videoId= {this.state.currentVideoID}
+                <YouTube videoId={this.state.currentVideoID}
                   onReady={this._onReady}></YouTube>
               </Modal>
               {this.state.userVideoObjs.length ? (
-              <VideoBox className="video-container">
-                  
-                    {this.state.userVideoObjs.map(result => (
-                      
-                      <VideoCard image={result.snippet.thumbnails.high.url}
+
+                <VideoBox className="video-container">
+
+                  {this.state.userVideoObjs.map(result => (
+
+                    <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
                       handleBtnSave={this.handleBtnSave}
                       alreadySaved={this.alreadySaved}
-                      >
-                      </VideoCard>
+                    >
+                    </VideoCard>
 
-))}
-
-
+                  ))}
 
 
 
-</VideoBox>
-                    ) : (
+
+
+                </VideoBox>
+              ) : (
                   <h3></h3>
-                )}    
+                )}
             </Col>
 
             <Col size="md-2">

@@ -14,7 +14,7 @@ import YouTube from 'react-youtube';
 import Thumbnail from "../../components/Thumbnail";
 import VideoCard from '../../components/VideoCard';
 import FriendsList from '../../components/FriendsList';
-import Modal from '../../components/Modal'
+import Modal from '../../components/Modal';
 import "./Search.css";
 
 
