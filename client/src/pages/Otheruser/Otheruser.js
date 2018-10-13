@@ -16,7 +16,9 @@ import VideoCard from '../../components/VideoCard';
 import ProfileCard from '../../components/ProfileCard';
 import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal';
+import OtherUserBtn from '../../components/OtherUserBtn';
 import VideoBox from "../../components/VideoBox";
+
 import "./Otheruser.css";
 
 
@@ -38,7 +40,9 @@ class Home extends Component {
     userFriends: [],
     userFriendObjs: [],
     userVideos: [],
-    userVideoObjs: []
+    userVideoObjs: [],
+    currentUserVideos: [],
+    currentUserFriends: [],
 
   };
 
@@ -49,15 +53,16 @@ class Home extends Component {
     this.loadUser(userID);
   }
 
-  // Loads all User  and sets them to this.state.User
+  // Loads all User and sets them to this.state.User
   loadUser = (id) => {
 
     API.getBook(id)
       .then(res => {
         this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts })
-        console.log(this.state.user)
+        console.log(this.state.user._id)
 
         this.loadFriends();
+
         console.log(this.state.userVideos)
         if (this.state.userVideos.length > 0) {
           this.loadVideos();
@@ -68,6 +73,46 @@ class Home extends Component {
       })
       .catch(err => console.log(err));
 
+  };
+
+  checkFriend = (id) => {
+    if (this.state.currentUserFriends.includes(id)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+
+  }
+
+  handleFriends = friendID => {
+    console.log(friendID);
+    var userID = localStorage.getItem("userID")
+    var otherUserID = window.location.href.substr(window.location.href.lastIndexOf('/') + 1)
+    if (this.checkFriend(friendID)) {
+      API.removeFriend(userID, friendID)
+        .then(res => {
+
+          this.loadUser(otherUserID);
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
+      console.log(this.state.users)
+    }
+    else {
+      API.addFriend(userID, friendID)
+        .then(res => {
+
+          this.loadUser(otherUserID);
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
+      console.log(this.state.users)
+    }
   };
 
   loadVideos = () => {
@@ -112,7 +157,7 @@ class Home extends Component {
         }
         this.setState({ userFriendObjs: userFriendObjs })
         console.log(this.state.userFriendObjs)
-
+        this.loadUserVideos(localStorage.getItem("userID"))
       })
       .catch(err => console.log(err));
   };
@@ -125,7 +170,7 @@ class Home extends Component {
   alreadySaved = (id) => {
     //console.log('look at me:')
     //console.log(this.state.userVideos)
-    if (this.state.userVideos.includes(id)) {
+    if (this.state.currentUserVideos.includes(id)) {
       return true;
     }
     else {
@@ -134,6 +179,18 @@ class Home extends Component {
 
   }
 
+  loadUserVideos = (id) =>{
+    API.getBook(id)
+      .then(res => {
+        console.log(res)
+        console.log(res.data.friends)
+        this.setState({ currentUserVideos: res.data.posts, currentUserFriends: res.data.friends })
+        console.log(this.state.currentUserFriends)
+      })
+      .catch(err => console.log(err));
+  }
+  
+
   handleBtnSave = (videoID) => {
     // for (var i = 0; i < this.state.apiResults.length; i++) {
     //   if (this.state.apiResults[i].id.videoId == videoID) {
@@ -141,12 +198,13 @@ class Home extends Component {
     //   }
     // }
     // event.preventDefault();
-    var userID = localStorage.getItem("userID")
+    var currentUserID = localStorage.getItem("userID")
+    var otherUserID = window.location.href.substr(window.location.href.lastIndexOf('/') + 1)
     if (this.alreadySaved(videoID)) {
-      API.removeVideo(userID, videoID)
+      API.removeVideo(currentUserID, videoID)
         .then(res => {
 
-          this.loadUser(userID);
+          this.loadUser(otherUserID)
           console.log(res)
 
         })
@@ -155,10 +213,10 @@ class Home extends Component {
       console.log(this.state.users)
     }
     else {
-      API.addVideo(userID, videoID)
+      API.addVideo(currentUserID, videoID)
         .then(res => {
 
-          this.loadUser(userID);
+          this.loadUser(otherUserID)
           console.log(res)
 
         })
@@ -187,6 +245,17 @@ class Home extends Component {
 
   hideModal = () => {
     this.setState({ show: false });
+  };
+
+  trimmedTitle = (title) => {
+    console.log(title);
+    if (title.length > 50){
+      title = title.slice(0,50)
+      return title + "..."
+    }
+    else {
+      return title
+    }
   };
 
   searchYoutube = query => {
@@ -228,7 +297,7 @@ class Home extends Component {
 
             <Col size="md-3">
 
-              <Subtitle data="My Profile"></Subtitle>
+              <Subtitle data={this.state.username.toUpperCase() + " Profile"}></Subtitle>
 
               <ProfileCard
                 id={this.state.user._id}
@@ -240,10 +309,22 @@ class Home extends Component {
 
               />
 
+           <OtherUserBtn
+                   data-value="follow"
+                  
+                   id={this.state.user._id}
+                   checkFriend={this.checkFriend(this.state.user._id)}
+                   handleFriends={this.handleFriends}
+                   >
+
+           </OtherUserBtn>
+
+            
+
             </Col>
 
             <Col size="md-7">
-              <Subtitle data="Videos"></Subtitle>
+              <Subtitle data={this.state.username.toUpperCase() + " Videos"}></Subtitle>
 
               <Modal show={this.state.show} handleClose={this.hideModal}>
 
@@ -258,6 +339,7 @@ class Home extends Component {
                       
                       <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
+                      trimmedTitle = {this.trimmedTitle}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
@@ -279,7 +361,7 @@ class Home extends Component {
             </Col>
 
             <Col size="md-2">
-              <Subtitle data="My Friends"></Subtitle>
+              <Subtitle data={this.state.username.toUpperCase() + " Friends"} ></Subtitle>
 
 
               {this.state.userFriendObjs.map(user => {

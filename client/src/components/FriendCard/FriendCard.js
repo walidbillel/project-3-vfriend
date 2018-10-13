@@ -5,10 +5,10 @@ import ProfileBtn from '../../components/ProfileBtn';
 
 const FriendCard = props => (
   <div className="card" >
-    <div className="img-container" onClick = {() => props.goToFriend(props.id)}onClick={() => props.goToFriend(props.id)}>
+    <div className="img-container" onClick={() => props.goToFriend(props.id)}>
       <img alt={props.name} src={props.image} />
     </div>
-    <div className="content"  >
+    <div className="content" >
       <ul>
         <li>
           <strong>Name:</strong> {props.name}
@@ -17,25 +17,25 @@ const FriendCard = props => (
           <strong>Real Name:</strong> {props.realname}
         </li>
         <li>
-          
+
         </li>
       </ul>
-      
+
       <div className="profile-btns"></div>
-      <FollowBtn  
-      data-value="follow"
-      onClick = {() => props.handleFriends(props.id)}
-      id = {props.id}
-      checkFriend={props.checkFriend(props.id)}
+      <FollowBtn
+        data-value="follow"
+        onClick={() => props.handleFriends(props.id)}
+        id={props.id}
+        checkFriend={props.checkFriend(props.id)}
       />
-      <ProfileBtn 
-      data-value="profile"
-      onClick = {() => props.goToFriend(props.id)}
-      id = {props.id}
+      <ProfileBtn
+        data-value="profile"
+        onClick={() => props.goToFriend(props.id)}
+        id={props.id}
       />
-      
+
     </div>
-   
+
   </div>
 );
 

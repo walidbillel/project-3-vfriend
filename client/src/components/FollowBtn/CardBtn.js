@@ -7,7 +7,7 @@ const CardBtn = props => (
     className={`follow-btn ${props["data-value"]}`}
     {...props}
   >
-  {props.checkFriend ? "unfollow" : "follow"}
+  {props.checkFriend ? "Unvriend" : "Vriend"}
   </button>
 );
 

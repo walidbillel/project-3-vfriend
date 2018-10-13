@@ -69,42 +69,31 @@ class Home extends Component {
 
     localStorage.clear()
     event.preventDefault();
-    console.log("username: " + this.state.username + " pass: " + this.state.password);
-    localStorage.setItem("username", this.state.username);
-
-    API.getBooks().then(res => {
-      let users = res.data;
-      let userArray = [];
-      let passwordArray = [];
-      // console.log(users)
-      for (let i = 0; i < users.length; i++) {
-
-        userArray.push(users[i].username);
-        passwordArray.push(users[i].password);
-
-      }
-      console.log(userArray);
-      console.log(passwordArray);
-      if (userArray.includes(this.state.username) && passwordArray.includes(this.state.password)) {
-        API.getBookName(this.state.username)
+    //console.log("username: " + this.state.username + " pass: " + this.state.password);
+    if (this.state.username && this.state.password) {
+      API.getBookName(this.state.username)
           .then(res => {
             this.setState({ users: res.data })
-            console.log(this.state.users)
-            localStorage.setItem("userID", this.state.users._id)
-            console.log(localStorage.getItem("userID"))
-            window.location.href = "/home"
+            var bcrypt = require('bcryptjs');
+            if (bcrypt.compareSync(this.state.password, this.state.users.password))
+            {
+              localStorage.setItem("userID", this.state.users._id)
+              localStorage.setItem("username", this.state.username)
+              window.location.href = "/home"     
+            }
+            else{
+              this.setState({show: true})
 
+            }
 
 
           })
           //console.log(this.state.users)
-          .catch(err => console.log(err));
-        console.log(this.state.users)
-      } else {
-       this.setState({show: true})
-        // <Modal show="{this.state.show}" handleClose={this.hideModal}></Modal>
-      }
-    });
+          .catch(err => {
+            this.setState({show: true})
+          });
+      } 
+
   
 
   };

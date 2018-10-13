@@ -8,6 +8,7 @@ import { Input, TextArea, FormBtn } from "../../components/Form";
 import Nav from "../../components/Nav";
 import Modal from '../../components/Modal';
 import { Link } from "react-router-dom";
+
 class Register extends Component {
   // Setting our component's initial state
   state = {
@@ -65,18 +66,24 @@ class Register extends Component {
     event.preventDefault();
     if (this.state.password !== this.state.confirmPass) {
       this.setState({show: true})
-    } else {
-      API.saveBook({
-        username: this.state.username,
-        realname: this.state.realname,
-        photo: this.state.photo,
-        gender: this.state.gender,
-        password: this.state.password,
-        connfirmPass: this.state.confirmPass
-  
-      })
-        .then(res => this.loadBooks())
-        .catch(err => console.log(err));
+    } 
+    else {
+      var bcrypt = require('bcryptjs');
+      var salt = bcrypt.genSaltSync(10);
+      var hash = bcrypt.hashSync(this.state.password, salt);
+        API.saveBook({
+          username: this.state.username,
+          realname: this.state.realname,
+          photo: this.state.photo,
+          gender: this.state.gender,
+          password: hash,
+         
+    
+        })
+          .then(res => this.loadBooks())
+          .catch(err => console.log(err));
+     
+      
     }
    
 

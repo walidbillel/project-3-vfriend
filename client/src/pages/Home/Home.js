@@ -12,7 +12,7 @@ import SearchForm from "../../components/SearchForm";
 //import Youtube from '../../components/Youtube';
 // import ModalPop from "../../components/Modal";
 import Thumbnail from "../../components/Thumbnail";
-import VideoCard from '../../components/VideoCard';
+import HomeVideoCard from '../../components/HomeVideoCard';
 import ProfileCard from '../../components/ProfileCard';
 import FriendsList from '../../components/FriendsList';
 import Modal from '../../components/Modal';
@@ -39,6 +39,7 @@ class Home extends Component {
     userFriends: [],
     userFriendObjs: [],
     userVideos: [],
+    userVideoFeed: [],
     userVideoObjs: []
 
   };
@@ -47,21 +48,19 @@ class Home extends Component {
   componentDidMount() {
 
     this.loadUser(localStorage.getItem("userID"));
-  }
+  };
 
   // Loads all User  and sets them to this.state.User
   loadUser = (id) => {
     API.getBook(id)
       .then(res => {
-        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts })
+        console.log(res.data)
+        this.setState({ user: res.data, username: res.data.username, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, userVideos: res.data.posts, })
         console.log(this.state.user)
-
         this.loadFriends();
-        console.log(this.state.userVideos)
-        if (this.state.userVideos.length > 0) {
-          this.loadVideos();
-
-        }
+        //this.loadVideos(res.data.posts)
+       
+        
 
 
       })
@@ -69,15 +68,43 @@ class Home extends Component {
 
   };
 
-  loadVideos = () => {
-    console.log("test")
-    for (var i = 0; i < this.state.userVideos.length; i++) {
+  loadBooks = () => {
+    API.getBooks()
+      .then(res => {
+        this.setState({
+          users: res.data, username: "", realname: "", photo: "", gender: "",
+          password: "",
+        })
+        
+        
+        console.log(this.state.users)
+        var noCurrentUser = this.state.users
+        for (var i = 0; i < noCurrentUser.length; i++){
+          if (localStorage.getItem("userID") == noCurrentUser[i]._id)
+          {
+            noCurrentUser.splice(i, 1);
+          }
+
+        }
+        this.setState({
+          users2: noCurrentUser
+        })
+        console.log(this.state.users)
+        this.loadUser(localStorage.getItem("userID"))
+        
+      })
+      .catch(err => console.log(err));
+  };
+  
+  loadVideos = (videoArr) => {
+    console.log(videoArr)
+    for (var i = 0; i < videoArr.length; i++) {
       var query;
       if (query) {
-        query = query + this.state.userVideos[i] + ",";
+        query = query + videoArr[i] + ",";
       }
       else {
-        query = this.state.userVideos[i] + ",";
+        query = videoArr[i] + ",";
       }
     }
     var queryState = "multiSearch"
@@ -87,7 +114,7 @@ class Home extends Component {
         this.setState({ userVideoObjs: res.data.items })
         console.log(this.state.apiResults);
         console.log(this.state.userVideoObjs)
-        this.test()
+        //this.test()
       })
       .catch(err => console.log(err));
 
@@ -110,7 +137,8 @@ class Home extends Component {
 
         }
         this.setState({ userFriendObjs: userFriendObjs })
-        console.log(this.state.userFriendObjs)
+        this.getFriendsVideos()
+      
 
       })
       .catch(err => console.log(err));
@@ -121,17 +149,102 @@ class Home extends Component {
     this.setState({ currentVideoID: id, show: true })
   };
 
+
+  checkFriend = (id) => {
+    if (this.state.userFriends.includes(id)){
+      return true;
+    }
+    else{
+      return false;
+    }
+
+  }
+
+  handleFriends = friendID => {
+    console.log(friendID);
+    var userID = localStorage.getItem("userID")
+
+    if (this.checkFriend(friendID)){
+      API.removeFriend(userID, friendID)
+      .then(res => { 
+        
+      this.loadBooks();
+        console.log(res)
+     
+      })
+      //console.log(this.state.users)
+      .catch(err => console.log(err));
+      console.log(this.state.users)
+    }
+    else{
+    API.addFriend(userID, friendID)
+      .then(res => { 
+        
+      this.loadBooks();
+        console.log(res)
+     
+      })
+      //console.log(this.state.users)
+      .catch(err => console.log(err));
+      console.log(this.state.users)
+    }
+  };
+
+
+  getFriendsVideos = () => {
+      var newVideoFeed = []
+        console.log(newVideoFeed)
+        for (var i = 0; i < this.state.userFriendObjs.length; i++) {
+          console.log(this.state.userFriendObjs[i].posts)
+          var userFriendVideos = this.state.userFriendObjs[i].posts;
+          console.log(userFriendVideos)
+          if(userFriendVideos){
+            for (var x = 0; x < userFriendVideos.length; x++) {
+              console.log(userFriendVideos[x])
+              if (!newVideoFeed.includes(userFriendVideos[x])) {
+                newVideoFeed.push(userFriendVideos[x])
+              }
+            }
+          }
+        }
+        console.log(newVideoFeed);
+        
+       var userVideoFeed =  this.state.user.posts
+
+       var totalVideoFeed = userVideoFeed.concat(newVideoFeed)
+       console.log(totalVideoFeed)
+     var uniqueVideoArray = totalVideoFeed.filter(function(item, pos) {
+        return totalVideoFeed.indexOf(item) == pos;
+    })
+       this.loadVideos(uniqueVideoArray)
+  };
+
   alreadySaved = (id) => {
-    console.log('look at me:')
-    console.log(this.state.userVideos)
-    if (this.state.userVideos.includes(id)) {
+    console.log(this.state.user.posts)
+
+    if (this.state.user.posts.includes(id)) {
       return true;
     }
     else {
       return false;
     }
 
-  }
+  };
+
+  getVideoUsers = (id) => {
+    var users = "";
+    if(this.state.user.posts.includes(id)){
+      users = users + "You" + ", "
+    }
+    for (var i = 0; i < this.state.userFriendObjs.length; i++) {
+      if(this.state.userFriendObjs[i].posts.includes(id)){
+        users = users + this.state.userFriendObjs[i].username + ", "
+      }
+    }
+  
+   return users;
+  
+  };
 
   handleBtnSave = (videoID) => {
     // for (var i = 0; i < this.state.apiResults.length; i++) {
@@ -186,6 +299,17 @@ class Home extends Component {
 
   hideModal = () => {
     this.setState({ show: false });
+  };
+
+  trimmedTitle = (title) => {
+    console.log(title);
+    if (title.length > 50){
+      title = title.slice(0,50)
+      return title + "..."
+    }
+    else {
+      return title
+    }
   };
 
   searchYoutube = query => {
@@ -255,15 +379,17 @@ class Home extends Component {
 
                   {this.state.userVideoObjs.map(result => (
 
-                    <VideoCard image={result.snippet.thumbnails.high.url}
+                    <HomeVideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
+                      trimmedTitle = {this.trimmedTitle}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
                       handleBtnSave={this.handleBtnSave}
                       alreadySaved={this.alreadySaved}
+                      getVideoUsers={this.getVideoUsers}
                     >
-                    </VideoCard>
+                    </HomeVideoCard>
 
                   ))}
 
@@ -284,7 +410,7 @@ class Home extends Component {
               {this.state.userFriendObjs.map(user => {
                 return (
 
-                  <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList>
+                   <FriendsList handleFriends = {this.handleFriends} checkFriend = {this.checkFriend} id={user._id} image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
 
                 )
               })}

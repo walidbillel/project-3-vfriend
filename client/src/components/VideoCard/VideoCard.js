@@ -12,11 +12,10 @@ const VideoCard = props => {
       </div>
       <div className="content" >
 
-        <strong>Title:</strong> {props.title}
+        <strong>Title:</strong> {props.trimmedTitle(props.title)}
 
 
       </div>
-
       <PlayBtn
         style={{ opacity: props.image ? 1 : 0 }}
         onClick={() => props.handleBtnPlay(props.id)}

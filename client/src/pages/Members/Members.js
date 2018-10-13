@@ -13,15 +13,15 @@ import MemberBox from "../../components/MemberBox";
 import { Link } from "react-router-dom";
 import FriendsList from '../../components/FriendsList';
 import "./Members.css";
-import Hero  from "../../components/Hero";
+import Hero from "../../components/Hero";
 
 class Members extends Component {
   // Setting our component's initial state
   state = {
-    user:[],
+    user: [],
     users: [],
-    users2:[],
-    userFriends:[],
+    users2: [],
+    userFriends: [],
     username: "",
     realname: "",
     photo: "",
@@ -44,20 +44,19 @@ class Members extends Component {
         this.setState({
           users: res.data,
         })
-        
-        
+
+
         console.log(this.state.users)
         var userFriendObjs = []
-        for (var i = 0; i < this.state.users.length; i++){
-          if (this.state.userFriends.includes(this.state.users[i]._id))
-          {
+        for (var i = 0; i < this.state.users.length; i++) {
+          if (this.state.userFriends.includes(this.state.users[i]._id)) {
             userFriendObjs.push(this.state.users[i])
           }
 
         }
         this.setState({ userFriendObjs: userFriendObjs })
         console.log(this.state.userFriendObjs)
-        
+
       })
       .catch(err => console.log(err));
   };
@@ -70,13 +69,12 @@ class Members extends Component {
           users: res.data, username: "", realname: "", photo: "", gender: "",
           password: "",
         })
-        
-        
+
+
         console.log(this.state.users)
         var noCurrentUser = this.state.users
-        for (var i = 0; i < noCurrentUser.length; i++){
-          if (localStorage.getItem("userID") == noCurrentUser[i]._id)
-          {
+        for (var i = 0; i < noCurrentUser.length; i++) {
+          if (localStorage.getItem("userID") == noCurrentUser[i]._id) {
             noCurrentUser.splice(i, 1);
           }
 
@@ -86,7 +84,7 @@ class Members extends Component {
         })
         console.log(this.state.users)
         this.loadUser(localStorage.getItem("userID"))
-        
+
       })
       .catch(err => console.log(err));
   };
@@ -102,7 +100,7 @@ class Members extends Component {
     console.log(id)
     API.getBook(id)
       .then(res => {
-        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, search: "", apiResults: [],})
+        this.setState({ user: res.data, username: res.data.realname, realname: res.data.realname, photo: res.data.photo, gender: res.data.gender, currentuserID: res.data._id, userFriends: res.data.friends, search: "", apiResults: [], })
         console.log(this.state.userFriends)
         this.loadFriends();
       })
@@ -116,7 +114,7 @@ class Members extends Component {
       [name]: value
     });
   };
-  
+
   goToFriend = id => {
     console.log(id);
     window.location.href = "/otheruser/" + id
@@ -124,10 +122,10 @@ class Members extends Component {
   };
 
   checkFriend = (id) => {
-    if (this.state.userFriends.includes(id)){
+    if (this.state.userFriends.includes(id)) {
       return true;
     }
-    else{
+    else {
       return false;
     }
 
@@ -137,28 +135,28 @@ class Members extends Component {
     console.log(friendID);
     var userID = localStorage.getItem("userID")
 
-    if (this.checkFriend(friendID)){
+    if (this.checkFriend(friendID)) {
       API.removeFriend(userID, friendID)
-      .then(res => { 
-        
-      this.loadBooks();
-        console.log(res)
-     
-      })
-      //console.log(this.state.users)
-      .catch(err => console.log(err));
+        .then(res => {
+
+          this.loadBooks();
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
       console.log(this.state.users)
     }
-    else{
-    API.addFriend(userID, friendID)
-      .then(res => { 
-        
-      this.loadBooks();
-        console.log(res)
-     
-      })
-      //console.log(this.state.users)
-      .catch(err => console.log(err));
+    else {
+      API.addFriend(userID, friendID)
+        .then(res => {
+
+          this.loadBooks();
+          console.log(res)
+
+        })
+        //console.log(this.state.users)
+        .catch(err => console.log(err));
       console.log(this.state.users)
     }
   };
@@ -167,26 +165,26 @@ class Members extends Component {
   // Then reload books from the database
   handleFormSubmit = event => {
     event.preventDefault();
-    
+
   };
 
   render() {
     return (
       <div>
-      <Nav />
-      <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-        <h1>Vfriend Members</h1>
+        <Nav />
+        <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
+          <h1>Find New Friends</h1>
 
-      </Hero>
-      <br></br>
-      <Container fluid>
+        </Hero>
+        <br></br>
+        <Container fluid>
 
-        <Row>
-          <Col size="md-10">
+          <Row>
+            <Col size="md-10">
 
-          <Subtitle data="Members"></Subtitle>
+              <Subtitle data="Members"></Subtitle>
 
-           
+
               <MemberBox>
                 {this.state.users2.map(friend => (
                   <FriendCard
@@ -197,8 +195,8 @@ class Members extends Component {
                     image={friend.photo}
                     realname={friend.realname}
                     gender={friend.gender}
-                    checkFriend = {this.checkFriend}
-                    handleFriends = {this.handleFriends}
+                    checkFriend={this.checkFriend}
+                    handleFriends={this.handleFriends}
 
                   >
                   </FriendCard>
@@ -206,21 +204,21 @@ class Members extends Component {
                 ))}
               </MemberBox>
 
-           
-          </Col>
 
-          <Col size="md-2">
-          <Subtitle data="My friends"></Subtitle>
-          {this.state.userFriendObjs.map(user => {
-                  return (
-                    
-                    <FriendsList image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList> 
-                   
-                  )
-                })}
-          </Col>
-        </Row>
-      </Container>
+            </Col>
+
+            <Col size="md-2">
+              <Subtitle data="My friends"></Subtitle>
+              {this.state.userFriendObjs.map(user => {
+                return (
+
+                  <FriendsList handleFriends={this.handleFriends} checkFriend={this.checkFriend} id={user._id} image={user.photo} name={user.username} userId={"/otheruser/" + user._id}></FriendsList>
+
+                )
+              })}
+            </Col>
+          </Row>
+        </Container>
       </div>
     );
   }

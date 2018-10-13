@@ -125,8 +125,6 @@ class Search extends Component {
   };
 
   alreadySaved = (id) => {
-    console.log('look at me:')
-    console.log(this.state.userVideos)
     if (this.state.userVideos.includes(id)) {
       return true;
     }
@@ -190,6 +188,17 @@ class Search extends Component {
     this.setState({ show: false });
   };
 
+  trimmedTitle = (title) => {
+    console.log(title);
+    if (title.length > 50){
+      title = title.slice(0,50)
+      return title + "..."
+    }
+    else {
+      return title
+    }
+  };
+
   searchYoutube = (query) => {
     // event.preventDefault()
     console.log(query)
@@ -233,7 +242,7 @@ class Search extends Component {
 
         <Nav userLogged={this.state.user.username} />
         <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-          <h1>Hi {this.state.user.username}! </h1>
+          <h1>Hey {this.state.user.username}, Search Here!</h1>
 
         </Hero>
         <br></br>
@@ -265,6 +274,7 @@ class Search extends Component {
 
                     <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
+                      trimmedTitle = {this.trimmedTitle}
                       key={result.id.videoId}
                       id={result.id.videoId}
                       handleBtnPlay={this.handleBtnPlay}
@@ -295,6 +305,7 @@ class Search extends Component {
 
                     <VideoCard image={result.snippet.thumbnails.high.url}
                       title={result.snippet.title}
+                      trimmedTitle = {this.trimmedTitle}
                       key={result.id}
                       id={result.id}
                       handleBtnPlay={this.handleBtnPlay}
