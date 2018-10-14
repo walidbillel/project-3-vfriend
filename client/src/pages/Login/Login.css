@@ -5,3 +5,12 @@ body {
 .formTitle {
     font-family: 'Frijole', cursive;
 }
+
+.logo-img {
+    width: 100%;
+    height: 75px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+    padding: 5px;
+}
+

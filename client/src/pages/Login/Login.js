@@ -9,6 +9,8 @@ import { List, ListItem } from "../../components/List";
 import { Input, TextArea, FormBtn } from "../../components/Form";
 import Modal from '../../components/Modal';
 import Nav from "../../components/Nav";
+import Logo from './logo.svg'
+import { spawn } from "child_process";
 class Home extends Component {
   // Setting our component's initial state
   state = {
@@ -108,7 +110,9 @@ class Home extends Component {
           <Col size="md-4"></Col>
           <Col size="md-4">
             <Jumbotron>
-              <h1 className="text-center text-white formTitle">Login</h1>
+            <img className="img img-responsive logo-img" src={Logo}></img>
+              <h1 className="text-center text-white formTitle">Login </h1>
+        
               <hr></hr>
               <form>
                 <Input

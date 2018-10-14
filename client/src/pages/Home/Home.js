@@ -404,7 +404,7 @@ class Home extends Component {
             </Col>
 
             <Col size="md-2">
-              <Subtitle data="My Friends"></Subtitle>
+              <Subtitle data="Vriends"></Subtitle>
 
 
               {this.state.userFriendObjs.map(user => {

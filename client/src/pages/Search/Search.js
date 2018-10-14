@@ -250,7 +250,7 @@ class Search extends Component {
           <Row>
             <Col size="md-5">
 
-              <Subtitle data="Look For Your Favorite videos"></Subtitle>
+              <Subtitle data="Look Up Your Favorite videos"></Subtitle>
 
               <SearchForm
                 searchQuery={this.state.searchQuery}
@@ -325,7 +325,7 @@ class Search extends Component {
                 )}
             </Col>
             <Col size="md-2">
-              <Subtitle data="My Friends"></Subtitle>
+              <Subtitle data="Vriends"></Subtitle>
               {this.state.userFriendObjs.map(user => {
                   return (
 

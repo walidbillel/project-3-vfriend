@@ -361,7 +361,7 @@ class Home extends Component {
             </Col>
 
             <Col size="md-2">
-              <Subtitle data={this.state.username.toUpperCase() + " Friends"} ></Subtitle>
+              <Subtitle data={this.state.username.toUpperCase() + " Vriends"} ></Subtitle>
 
 
               {this.state.userFriendObjs.map(user => {

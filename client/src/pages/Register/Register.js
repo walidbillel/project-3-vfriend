@@ -8,6 +8,7 @@ import { Input, TextArea, FormBtn } from "../../components/Form";
 import Nav from "../../components/Nav";
 import Modal from '../../components/Modal';
 import { Link } from "react-router-dom";
+import Logo from './logo.svg';
 
 class Register extends Component {
   // Setting our component's initial state
@@ -96,6 +97,7 @@ class Register extends Component {
           <Col size="md-4"></Col>
           <Col size="md-4">
             <Jumbotron>
+            <img className="img img-responsive logo-img" src={Logo}></img>
               <h1 className="text-center text-white formTitle">Sign up Here</h1>
               <hr></hr>
               <form>

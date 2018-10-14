@@ -173,7 +173,7 @@ class Members extends Component {
       <div>
         <Nav />
         <Hero backgroundImage="https://coolbackgrounds.io/images/backgrounds/sea-edge-311c5cd5.png">
-          <h1>Find New Friends</h1>
+          <h1>Find New Vrienders</h1>
 
         </Hero>
         <br></br>
@@ -182,7 +182,7 @@ class Members extends Component {
           <Row>
             <Col size="md-10">
 
-              <Subtitle data="Members"></Subtitle>
+              <Subtitle data="Vrienders"></Subtitle>
 
 
               <MemberBox>
@@ -208,7 +208,7 @@ class Members extends Component {
             </Col>
 
             <Col size="md-2">
-              <Subtitle data="My friends"></Subtitle>
+              <Subtitle data="Vriends"></Subtitle>
               {this.state.userFriendObjs.map(user => {
                 return (
 
